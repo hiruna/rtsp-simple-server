@@ -194,6 +194,9 @@ paths:
     publishPass:
     # IPs or networks (x.x.x.x/24) allowed to publish.
     publishIPs: []
+    # If the source (i.e. RTSP) responds with a redirect and credentials were used, should the credentials be persisted
+    # during the redirection
+    persistCredentialsOnRedirect: false
 
     # Username required to read.
     # SHA256-hashed values can be inserted with the "sha256:" prefix.

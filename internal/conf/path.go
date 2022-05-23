@@ -3,12 +3,11 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aler9/gortsplib/pkg/base"
 	"net/url"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/aler9/gortsplib/pkg/base"
 )
 
 var rePathName = regexp.MustCompile(`^[0-9a-zA-Z_\-/\.~]+$`)
@@ -51,12 +50,13 @@ type PathConf struct {
 	Fallback                   string         `json:"fallback"`
 
 	// authentication
-	PublishUser Credential `json:"publishUser"`
-	PublishPass Credential `json:"publishPass"`
-	PublishIPs  IPsOrNets  `json:"publishIPs"`
-	ReadUser    Credential `json:"readUser"`
-	ReadPass    Credential `json:"readPass"`
-	ReadIPs     IPsOrNets  `json:"readIPs"`
+	PublishUser                  Credential `json:"publishUser"`
+	PublishPass                  Credential `json:"publishPass"`
+	PublishIPs                   IPsOrNets  `json:"publishIPs"`
+	ReadUser                     Credential `json:"readUser"`
+	ReadPass                     Credential `json:"readPass"`
+	ReadIPs                      IPsOrNets  `json:"readIPs"`
+	PersistCredentialsOnRedirect bool       `json:"persistCredentialsOnRedirect"`
 
 	// external commands
 	RunOnInit               string         `json:"runOnInit"`

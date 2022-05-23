@@ -698,6 +698,7 @@ func (pa *path) staticSourceCreate() {
 			pa.conf.Source,
 			pa.conf.SourceProtocol,
 			pa.conf.SourceAnyPortEnable,
+			pa.conf.PersistCredentialsOnRedirect,
 			pa.conf.SourceFingerprint,
 			pa.readTimeout,
 			pa.writeTimeout,

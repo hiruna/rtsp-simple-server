@@ -28,15 +28,16 @@ type rtspSourceParent interface {
 }
 
 type rtspSource struct {
-	ur              string
-	proto           conf.SourceProtocol
-	anyPortEnable   bool
-	fingerprint     string
-	readTimeout     conf.StringDuration
-	writeTimeout    conf.StringDuration
-	readBufferCount int
-	wg              *sync.WaitGroup
-	parent          rtspSourceParent
+	ur                           string
+	proto                        conf.SourceProtocol
+	anyPortEnable                bool
+	persistCredentialsOnRedirect bool
+	fingerprint                  string
+	readTimeout                  conf.StringDuration
+	writeTimeout                 conf.StringDuration
+	readBufferCount              int
+	wg                           *sync.WaitGroup
+	parent                       rtspSourceParent
 
 	ctx       context.Context
 	ctxCancel func()
@@ -47,6 +48,7 @@ func newRTSPSource(
 	ur string,
 	proto conf.SourceProtocol,
 	anyPortEnable bool,
+	persistCredentialsOnRedirect bool,
 	fingerprint string,
 	readTimeout conf.StringDuration,
 	writeTimeout conf.StringDuration,
@@ -57,17 +59,18 @@ func newRTSPSource(
 	ctx, ctxCancel := context.WithCancel(parentCtx)
 
 	s := &rtspSource{
-		ur:              ur,
-		proto:           proto,
-		anyPortEnable:   anyPortEnable,
-		fingerprint:     fingerprint,
-		readTimeout:     readTimeout,
-		writeTimeout:    writeTimeout,
-		readBufferCount: readBufferCount,
-		wg:              wg,
-		parent:          parent,
-		ctx:             ctx,
-		ctxCancel:       ctxCancel,
+		ur:                           ur,
+		proto:                        proto,
+		anyPortEnable:                anyPortEnable,
+		persistCredentialsOnRedirect: persistCredentialsOnRedirect,
+		fingerprint:                  fingerprint,
+		readTimeout:                  readTimeout,
+		writeTimeout:                 writeTimeout,
+		readBufferCount:              readBufferCount,
+		wg:                           wg,
+		parent:                       parent,
+		ctx:                          ctx,
+		ctxCancel:                    ctxCancel,
 	}
 
 	s.log(logger.Info, "started")
@@ -137,12 +140,13 @@ func (s *rtspSource) runInner() bool {
 	}
 
 	c := &gortsplib.Client{
-		Transport:       s.proto.Transport,
-		TLSConfig:       tlsConfig,
-		ReadTimeout:     time.Duration(s.readTimeout),
-		WriteTimeout:    time.Duration(s.writeTimeout),
-		ReadBufferCount: s.readBufferCount,
-		AnyPortEnable:   s.anyPortEnable,
+		Transport:                    s.proto.Transport,
+		TLSConfig:                    tlsConfig,
+		ReadTimeout:                  time.Duration(s.readTimeout),
+		WriteTimeout:                 time.Duration(s.writeTimeout),
+		ReadBufferCount:              s.readBufferCount,
+		AnyPortEnable:                s.anyPortEnable,
+		PersistCredentialsOnRedirect: s.persistCredentialsOnRedirect,
 		OnRequest: func(req *base.Request) {
 			s.log(logger.Debug, "c->s %v", req)
 		},
